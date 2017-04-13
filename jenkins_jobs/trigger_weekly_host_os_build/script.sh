@@ -3,17 +3,20 @@ set -e
 VERSIONS_REPOSITORY_URL="https://github.com/${GITHUB_ORGANIZATION_NAME}/versions.git"
 PUSH_URL_PREFIX="ssh://git@github.com/${GITHUB_BOT_USER_NAME}"
 
+BUILDS_WORKSPACE_DIR="/var/lib/host-os"
+REPOSITORIES_PATH="${BUILDS_WORKSPACE_DIR}/repositories"
+
 VERSIONS_REPO_NAME="versions"
 VERSIONS_PUSH_URL="${PUSH_URL_PREFIX}/${VERSIONS_REPO_NAME}.git"
+UPDATED_VERSIONS_REPO_PATH="${REPOSITORIES_PATH}/${VERSIONS_REPO_NAME}_update-versions"
 
 GITHUB_IO_REPO_NAME="${GITHUB_ORGANIZATION_NAME}.github.io"
 GITHUB_IO_PUSH_URL="${PUSH_URL_PREFIX}/${GITHUB_IO_REPO_NAME}.git"
+GITHUB_IO_REPO_PATH="${REPOSITORIES_PATH}/${GITHUB_IO_REPO_NAME}"
 
 BUILDS_REPO_NAME="builds"
 BUILDS_PUSH_URL="${PUSH_URL_PREFIX}/${BUILDS_REPO_NAME}.git"
-
-BUILDS_WORKSPACE_DIR="/var/lib/host-os"
-REPOSITORIES_PATH="${BUILDS_WORKSPACE_DIR}/repositories"
+BUILDS_REPO_PATH="."
 
 RELEASE_DATE=$(date +%Y-%m-%d)
 COMMIT_BRANCH="weekly-${RELEASE_DATE}"
@@ -129,21 +132,15 @@ create_symlinks() {
 }
 
 tag_git_repos() {
-    local repos_push_urls=$@
-    local version_file="${REPOSITORIES_PATH}/${VERSIONS_REPO_NAME}/VERSION"
+    local repos_paths=$@
+    local version_file="${UPDATED_VERSIONS_REPO_PATH}/VERSION"
     local tag_name="$(cat $version_file | tail -1)-${RELEASE_DATE}"
 
-    for push_url in ${repos_push_urls[@]}; do
-        repo_name=$(basename $push_url .git)
-        if [ $repo_name != $BUILDS_REPO_NAME ]; then
-            pushd "${REPOSITORIES_PATH}/${repo_name}"
-        fi
-        tag_remote="ssh://git@github.com/${GITHUB_ORGANIZATION_NAME}/${repo_name}"
+    for repo_path in ${repos_paths[@]}; do
+        pushd $repo_path
         git tag $tag_name
-        git push $tag_remote --tags
-        if [ $repo_name != $BUILDS_REPO_NAME ]; then
-            popd
-        fi
+        git push origin --tags
+        popd
     done
 }
 
@@ -169,4 +166,4 @@ GITHUB_IO_PR_NUMBER=$pr_number
 wait_pull_request_merge $GITHUB_IO_PR_NUMBER $GITHUB_IO_REPO_NAME
 
 create_symlinks
-tag_git_repos $VERSIONS_PUSH_URL $GITHUB_IO_PUSH_URL $BUILDS_PUSH_URL
+tag_git_repos $UPDATED_VERSIONS_REPO_PATH $GITHUB_IO_REPO_PATH $BUILDS_REPO_PATH
