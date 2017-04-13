@@ -139,7 +139,7 @@ tag_git_repos() {
     for repo_path in ${repos_paths[@]}; do
         pushd $repo_path
         git tag $tag_name
-        git push origin --tags
+        git push origin $tag_name
         popd
     done
 }
