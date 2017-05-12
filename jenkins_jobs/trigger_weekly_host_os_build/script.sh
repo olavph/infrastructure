@@ -36,13 +36,6 @@ create_pull_request() {
           "${GITHUB_ORGANIZATION_NAME}/${dest_repo}" "master" || echo "exit 1")
 }
 
-write_comment() {
-    local comment_text="$1"
-
-    github write_comment "${GITHUB_ORGANIZATION_NAME}/$VERSIONS_REPO_NAME" \
-       "$pr_number" "$comment_text"
-}
-
 get_build_state(){
     local target_context="Build Host OS"
 
@@ -153,8 +146,6 @@ tag_git_repos() {
 update_versions
 create_pull_request $VERSIONS_REPO_NAME
 VERSIONS_PR_NUMBER=$pr_number
-
-write_comment "$BUILD_ISO_TRIGGER_PHRASE"
 
 wait_pull_request_merge $VERSIONS_PR_NUMBER $VERSIONS_REPO_NAME
 
