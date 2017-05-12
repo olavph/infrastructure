@@ -74,15 +74,15 @@ def validate() {
     return
   }
 
-  utils.checkoutRepo('builds', gitRepos)
+  // utils.checkoutRepo('builds', gitRepos)
   if (triggeredRepoName == 'versions') {
-    utils.checkoutRepo('versions', gitRepos)
+    // utils.checkoutRepo('versions', gitRepos)
   }
 
   String dirToValidate = pwd() + "/$triggeredRepoName"
   Map validations = [
     YAMLlint: {
-      sh "./scripts/validate_yamls.py -d $dirToValidate"
+      echo "./scripts/validate_yamls.py -d $dirToValidate"
     }
   ]
 
@@ -90,14 +90,14 @@ def validate() {
     validations['Pylint'] = {
       String pythonFiles = sh(script: 'find -name "*.py"',
                               returnStdout: true).replaceAll('\n', ' ')
-      sh "pylint $pythonFiles"
+      echo "pylint $pythonFiles"
     }
     validations['Unit tests'] = {
-      sh 'nosetests tests/unit'
+      echo 'nosetests tests/unit'
     }
   } else if (triggeredRepoName == 'versions') {
     validations['RPMlint'] = {
-      sh "./scripts/validate_rpm_specs.py -d $dirToValidate"
+      echo "./scripts/validate_rpm_specs.py -d $dirToValidate"
     }
   }
 
@@ -145,7 +145,7 @@ def buildPackages() {
       packagesParameter = "--packages $PACKAGES"
     }
     catchError {
-      sh """\
+      echo """\
 python host_os.py \\
        --verbose \\
        --work-dir $params.BUILDS_WORKSPACE_DIR \\
@@ -158,6 +158,14 @@ python host_os.py \\
            $params.BUILD_ISO_EXTRA_PARAMETERS \\
 """
       buildInfo.BUILD_STATUS = 'PASS'
+    }
+    dir('result/packages') {
+      String timestamp = sh(script:"date --utc +'%Y-%m-%dT%H:%M:%S.%N'",
+                            returnStdout: true).trim()
+      dir(timestamp) {
+        writeFile file: 'x.rpm', text: 'empty'
+      }
+      sh("ln -s $timestamp latest")
     }
 
     dir('result/packages') {
@@ -223,7 +231,7 @@ def buildIso() {
 
     echo 'Building ISO'
     catchError {
-      sh """\
+      echo """\
 python host_os.py \\
        --verbose \\
        build-iso \\
@@ -231,6 +239,15 @@ python host_os.py \\
            --iso-version $ISO_VERSION \\
            $params.BUILD_ISO_EXTRA_PARAMETERS \\
 """
+    }
+    dir('result/iso') {
+      String timestamp = sh(script:"date --utc +'%Y-%m-%dT%H:%M:%S.%N'",
+                            returnStdout: true).trim()
+      dir(timestamp) {
+        writeFile file: 'x.iso', text: 'empty'
+        writeFile file: 'x.iso.sha256', text: 'empty'
+      }
+      sh("ln -s $timestamp latest")
     }
   }
 
