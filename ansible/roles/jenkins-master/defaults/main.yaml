@@ -46,3 +46,5 @@ jenkins_plugins:
   - pipeline-utility-steps
   # Allows a pipeline job to notify a status for any GitHub commit
   - pipeline-githubnotify-step
+  # New Jenkins user experience
+  - blueocean
