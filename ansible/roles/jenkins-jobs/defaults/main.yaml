@@ -1,0 +1,4 @@
+administrative_jobs:
+  - create_node
+  - create_ssh_credentials
+  - create_user_pass_credentials

@@ -12,8 +12,9 @@
     - ssh
     - systemd
     - jenkins-master
-    - jenkins-seed-job
     - jenkins-pipeline
+    - jenkins-seed-job
+    - jenkins-jobs
   vars_files:
     - vars.yaml
     - vars-master.yaml

@@ -1,0 +1,58 @@
+---
+# Based on https://wjoel.com/posts/ansible-jenkins-pipeline-part-2.html
+
+- name: Get Jenkins crumb [jobs]
+  uri:
+    user: "{{jenkins_admin_user}}"
+    password: "{{jenkins_admin_password}}"
+    force_basic_auth: yes
+    url: "{{jenkins_local_url}}/crumbIssuer/api/json"
+    return_content: yes
+  register: jenkins_crumb
+  until:
+    jenkins_crumb.content.find('Please wait while Jenkins is getting ready') == -1
+  retries: 10
+  delay: 5
+  tags:
+    - setup
+
+- name: Set Jenkins crumb token [jobs]
+  set_fact:
+    jenkins_crumb_token: "{{jenkins_crumb.json.crumbRequestField}}={{jenkins_crumb.json.crumb}}"
+  tags:
+    - setup
+
+- name: Create administrative jobs
+  uri:
+    user: "{{jenkins_admin_user}}"
+    password: "{{jenkins_admin_password}}"
+    force_basic_auth: yes
+    url: "{{jenkins_local_url}}/job/{{seed_job_name}}/buildWithParameters?{{jenkins_crumb_token}}"
+    method: POST
+    body: JOB_DESCRIPTORS_FILES=jenkins_jobs/create_*.groovy
+    status_code: 201
+  tags:
+    - setup
+
+- name: Execute administrative jobs
+  uri:
+    user: "{{jenkins_admin_user}}"
+    password: "{{jenkins_admin_password}}"
+    force_basic_auth: yes
+    url: "{{jenkins_local_url}}/job/{{item}}/buildWithParameters?{{jenkins_crumb_token}}"
+    method: POST
+    status_code: 201
+  with_items: "{{administrative_jobs}}"
+  tags:
+    - setup
+
+- name: Create remaining jobs
+  uri:
+    user: "{{jenkins_admin_user}}"
+    password: "{{jenkins_admin_password}}"
+    force_basic_auth: yes
+    url: "{{jenkins_local_url}}/job/{{seed_job_name}}/buildWithParameters?{{jenkins_crumb_token}}"
+    method: POST
+    status_code: 201
+  tags:
+    - setup
