@@ -39,7 +39,7 @@ def checkoutRepo(String repoName, Map gitRepos) {
 def rsyncUpload(String args, String buildDirRsyncURL) {
   sh """\
 rsync -e 'ssh -i $env.HOME/.ssh/${params.UPLOAD_SERVER_USER_NAME}_id_rsa' \\
-      --verbose --compress --stats --times --chmod=a+rwx,g+wx,o- \\
+      --verbose --compress --links --stats --times --chmod=a+rwx,g+rwx,o- \\
       $args $buildDirRsyncURL\
 """
 }
