@@ -14,3 +14,5 @@ jenkins_bin_dir: /opt/jenkins
 jenkins_config_dir: /etc/jenkins
 jenkins_port: 8080
 jenkins_local_url: "http://127.0.0.1:{{jenkins_port}}"
+
+git_repo_root_dir: "{{playbook_dir}}/.."
