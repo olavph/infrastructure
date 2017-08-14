@@ -1,10 +1,10 @@
 ---
 pipeline_constants:
-  GITHUB_ORGANIZATION_NAME:
-  GITHUB_BOT_NAME:
-  GITHUB_BOT_USER_NAME:
-  GITHUB_BOT_EMAIL:
-  GITHUB_AUTHORIZED_USERS:
+  GITHUB_ORGANIZATION_NAME: olavph
+  GITHUB_BOT_NAME: olav-bot
+  GITHUB_BOT_USER_NAME: olavph
+  GITHUB_BOT_EMAIL: olavph-bot@test.com
+  GITHUB_AUTHORIZED_USERS: olavph
 
   BUILDS_WORKSPACE_DIR: /var/lib/host-os
   BUILDS_CONFIG_FILE: config/host_os.yaml
@@ -12,15 +12,15 @@ pipeline_constants:
 
   MAIN_CENTOS_REPO_RELEASE_URL: http://mirror.centos.org/altarch/7
   MAIN_EPEL_REPO_RELEASE_URL: http://download.fedoraproject.org/pub/epel/7
-  CENTOS_ALTERNATE_MIRROR_RELEASE_URL:
-  EPEL_ALTERNATE_MIRROR_RELEASE_URL:
+  CENTOS_ALTERNATE_MIRROR_RELEASE_URL: http://software.linux.ibm.com/pub/centos/alt_arch/7
+  EPEL_ALTERNATE_MIRROR_RELEASE_URL: ttp://mirror.utexas.edu/epel/7
 
-  UPLOAD_SERVER_HOST_NAME:
-  UPLOAD_SERVER_USER_NAME:
-  UPLOAD_SERVER_BUILDS_DIR_PATH:
-  UPLOAD_SERVER_WEEKLY_DIR_PATH:
-  UPLOAD_SERVER_DEVEL_DIR_PATH:
-  UPLOAD_SERVER_RELEASE_DIR_PATH:
+  UPLOAD_SERVER_HOST_NAME: pokgsa.ibm.com
+  UPLOAD_SERVER_USER_NAME: olavph
+  UPLOAD_SERVER_BUILDS_DIR_PATH: /gsa/pokgsa/home/o/l/olavph/host-os/builds
+  UPLOAD_SERVER_WEEKLY_DIR_PATH: /gsa/pokgsa/home/o/l/olavph/host-os/weekly
+  UPLOAD_SERVER_DEVEL_DIR_PATH: /gsa/pokgsa/home/o/l/olavph/host-os/devel
+  UPLOAD_SERVER_RELEASE_DIR_PATH: /gsa/pokgsa/home/o/l/olavph/host-os/release
 
   NIGHTLY_BUILDS_CRON_EXPRESSION: '0 22 * * *'
   WEEKLY_BUILDS_CRON_EXPRESSION: '0 11 * * 3'
