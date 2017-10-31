@@ -82,7 +82,6 @@
 - name: Create Jenkins admin user
   template:
     src=admin_config.xml.j2 dest="{{jenkins_home_dir}}/users/{{jenkins_admin_user}}/config.xml"
-    force=no
     owner={{user_name}} group={{user_name}}
   register: jenkins_admin_config
   tags:
